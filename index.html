@@ -3,13 +3,71 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Personal Site</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Hello</title>
   </head>
+  <style>
+    body{ 
+    background-color: #FBFCFC;
+    }
+    @font-face {
+        font-family: 'Franklin';
+        src: url('Franklin.ttf') format('truetype');
+    }
+    h1{
+    color: #1C2833;
+    font-family: "Franklin", sans-serif;
+    }
+  </style>
   <body>
-    <p>Hi</p>
-	<p>Pretty Great Website I got here</p>
-	  	<p> - Deacon Sowerby</p>
+    <canvas id="Cyclic" width="200" height="100" style="border:1px solid #000000;"></canvas>
+    <h1>Hi</h1>
+	<h1>Pretty Great Website I got here</h1>
+	  	<h1> - Deacon Sowerby</h1>
   </body>
+  <script type="x-shader/x-vertex" id="vertex-shader">
+    #version 100
+    void main() {
+      gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+      gl_PointSize = 64.0;
+    }
+  </script>
+  <script type="x-shader/x-fragment" id="fragment-shader">
+      #version 100
+      void main() {
+        gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
+      }
+  </script>   
+  <script>
+    var gl, program;
+    var canvas = document.querySelector("canvas");
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+    gl = canvas.getContext("webgl");
+    gl.viewport(0, 0, 
+    gl.drawingBufferWidth, gl.drawingBufferHeight);
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    var source = document.querySelector("#vertex-shader").innerHTML;
+    var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertexShader,source);
+    gl.compileShader(vertexShader);
+    source = document.querySelector("#fragment-shader").innerHTML
+    var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragmentShader,source);
+    gl.compileShader(fragmentShader);
+    program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    gl.detachShader(program, vertexShader);
+    gl.detachShader(program, fragmentShader);
+    gl.deleteShader(vertexShader);
+    gl.deleteShader(fragmentShader);
+    gl.enableVertexAttribArray(0);
+    buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 0, 0);
+    gl.useProgram(program);
+    gl.drawArrays(gl.POINTS, 0, 1);
+  </script>
 </html>
