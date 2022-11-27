@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello</title>
+    <title>Deacon</title>
   </head>
   <style>
     body{ 
@@ -17,29 +17,35 @@
     color: #1C2833;
     font-family: "Franklin", sans-serif;
     }
+    canvas {
+    position: absolute; 
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: auto; 
+    z-index:-1;
+}
   </style>
   <body>
-    <canvas id="Cyclic" width="200" height="100" style="border:1px solid #000000;"></canvas>
-    <h1>Hi</h1>
-	<h1>Experience</h1>
-  <a>This is Deacon</a>
-  <a>This is Deacon</a>
-  <a>This is Deacon</a>
+    <canvas id="Cyclic" style="border:1px solid #000000;"></canvas>
+  <h1>Hi<br>This is Deacon<br>I might add something here at some point</h1>
   </body>
   <script type="x-shader/x-vertex" id="vertex-shader">
     #version 100
     void main() {
       gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
-      gl_PointSize = 800.0;
+      gl_PointSize = 800.;
     }
   </script>
   <script type="x-shader/x-fragment" id="fragment-shader">
       #version 100
       precision highp float;
- #define MAXSTEPS 100
+  #define MAXSTEPS 100
   #define SURFACEDIST 0.01
   #define MAXDIST 100.
 
+  float screenHeight = 600.;
+  float screenWidth = 600.;
   uniform float iTime;
 
   mat4 RotateX(float theta) {
@@ -158,10 +164,10 @@
   void main()
   {
       // Normalized pixel coordinates (from 0 to 1)
-      vec2 uv = (1.* gl_FragCoord.xy-.5*vec2(800., 450.))/450.;
-  
+      vec2 uv = (gl_FragCoord.xy-.5*vec2(screenWidth, screenHeight))/screenHeight;
+
       //Origin Point
-      vec3 RayOrigin = vec4(0., 0, -60., 0.).xyz;
+      vec3 RayOrigin = vec3(sin(iTime)*5.-10., cos(iTime)*5.-10., -60.+sin(iTime));
       
       vec3 RayDirection = normalize(vec3(uv.x, uv.y, 1.));
       float d = RayMarch(RayOrigin, RayDirection);
@@ -190,7 +196,8 @@
     var gl, program;
     var canvas = document.querySelector("canvas");
     canvas.width = 800;
-    canvas.height = 450;
+    canvas.height = 800;
+    
     gl = canvas.getContext("webgl");
     gl.viewport(0, 0, 
     gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -220,13 +227,14 @@
     gl.drawArrays(gl.POINTS, 0, 1); 
 
     function draw()
-    {
-      gl.uniform1f (gl.getUniformLocation(program, "iTime"), ((Date.now()/10000)%1)); 
-      console.log(gl.getUniform(program, gl.getUniformLocation(program, "iTime")));
+    { 
+      gl.uniform1f (gl.getUniformLocation(program, "iTime"), ((Date.now()%100))); 
+      gl.useProgram(program);
+      gl.drawArrays(gl.POINTS, 0, 1); 
     }
     setInterval(function(){ 
       draw();
-    }, 100);
+    }, 250);
 
   </script>
 </html>
