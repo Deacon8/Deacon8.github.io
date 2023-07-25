@@ -23,7 +23,6 @@
     a{
       color: #1C2833;
       font-size: 1.5em;
-
     }
     a:hover {
       color: #990000;
@@ -64,31 +63,17 @@
     #define SURFACEDIST 0.01
     #define MAXDIST 100.
 
-    uniform float screenHeight;
     uniform float screenWidth;
     uniform float iTime;
 
-    mat4 RotateX(float theta) {
-        float c = cos(theta);
-        float s = sin(theta);
-
-        return mat4(
-            vec4(1, 0, 0, 0),
-            vec4(0, c, -s, 0),
-            vec4(0, s, c, 0),
-            vec4(0, 0, 0, 1)
-        );
-    }
-    mat4 RotateY(float theta) {
-        float c = cos(theta);
-        float s = sin(theta);
-
-        return mat4(
-            vec4(c, 0, s, 0),
-            vec4(0, 1, 0, 0),
-            vec4(-s, 0, c, 0),
-            vec4(0, 0, 0, 1)
-        );
+    mat3 RotateY(float theta) {
+      float c = cos(theta);
+      float s = sin(theta);
+      return mat3(
+          vec3(c, 0, s),
+          vec3(0, 1, 0),
+          vec3(-s, 0, c)
+      );
     }
     float sdSphere(vec3 Point, float Radius)
     {
@@ -96,33 +81,14 @@
         return length(Point - Position) - Radius;
     }
     float sdGyroid(vec3 p, float Scale, float thickness, float bias)
-    {
+    { 
+        p*=RotateY(iTime);
         p*=Scale;
         return abs(dot(sin(p), cos(p.zxy))-bias)/Scale-thickness;
     }
-    float sdPyramid( vec3 p, float h)
-    {
-      float m2 = h*h + 0.25;
-        
-      p.xz = abs(p.xz);
-      p.xz = (p.z>p.x) ? p.zx : p.xz;
-      p.xz -= 0.5;
-
-      vec3 q = vec3( p.z, h*p.y - 0.5*p.x, h*p.x + 0.5*p.y);
-      
-      float s = max(-q.x,0.0);
-      float t = clamp( (q.y-0.5*p.z)/(m2+0.25), 0.0, 1.0 );
-        
-      float a = m2*(q.x+s)*(q.x+s) + q.y*q.y;
-      float b = m2*(q.x+0.5*t)*(q.x+0.5*t) + (q.y-m2*t)*(q.y-m2*t);
-        
-      float d2 = min(q.y,-q.x*m2-q.y*0.5) > 0.0 ? 0.0 : min(a,b);
-        
-      return sqrt( (d2+q.z*q.z)/m2 ) * sign(max(q.z,-p.y));
-    }
     float GetDist(vec3 Position)//Scene
-    {
-        float sphere = sdSphere(Position, 20. + sin(iTime*.1));
+    { 
+        float sphere = sdSphere(Position, 20.*abs(sin(iTime*3.)));
         float gyroid = sdGyroid(Position, 1., .03, 1.3);
         float g1 = sdGyroid(Position, 10.76, .03, .4);
         float g2= sdGyroid(Position, 20.76, .06, .5);
@@ -164,7 +130,7 @@
     float GetLight(vec3 LightStuff)
     {
         vec3 LightPos = vec3(-20, 20, 6);
-        //LightPos.xz += vec2(sin(iTime), cos(iTime))*2.;
+        //LightPos.xz += vec2(sin(iTime*0.1), cos(iTime*0.1))*2.;
         vec3 Light = normalize(LightPos - LightStuff);
         vec3 Normal = GetNormal(LightStuff);
         float Dif = dot(Normal, Light);
@@ -184,10 +150,11 @@
     void main()
     {
         // Normalized pixel coordinates (from 0 to 1)
-        vec2 uv = (gl_FragCoord.xy-.5*vec2(screenWidth, screenHeight))/screenHeight;
+        vec2 uv = (gl_FragCoord.xy-.5*vec2(screenWidth, screenWidth))/screenWidth;
 
         //Origin Point
-        vec3 RayOrigin = vec3(sin(iTime)*5.-10., cos(iTime)*5.-10., -60.+sin(iTime));
+        vec3 RayOrigin = vec3(sin(iTime)*5.-10., cos(iTime)*5.-10., -40.);
+        RayOrigin = vec3(0, 0, -50.);
         
         vec3 RayDirection = normalize(vec3(uv.x, uv.y, 1.));
         float d = RayMarch(RayOrigin, RayDirection);
@@ -201,7 +168,7 @@
             //col += d/10.;
             //col += fract(GetNormal(p));
             col = pow(col, vec3(.2545));
-            col = mix(col, vec3(sin(iTime), sin(-iTime), 0.), 0.4);
+            col = mix(col, vec3(sin(iTime*10.), sin(-iTime*10.), 0.), 0.4);
         }
         else if(Noise(uv) > 0.99)
         {
@@ -215,8 +182,8 @@
   <script>
     var gl, program;
     var canvas = document.querySelector("canvas");
-    canvas.style.width = 800;
-    canvas.style.height = 800;
+    canvas.style.width = screen.width/3 + 'px';
+    canvas.style.height = screen.width/3 + 'px';
     canvas.width = screen.width/3;
     canvas.height = screen.width/3;
     if(screen.width < 850) 
@@ -252,15 +219,15 @@
 
     function draw()
     { 
-      gl.uniform1f (gl.getUniformLocation(program, "iTime"), ((Date.now()%100))); 
-      gl.uniform1f (gl.getUniformLocation(program, "screenWidth"), (canvas.width)*0.72); 
-      gl.uniform1f (gl.getUniformLocation(program, "screenHeight"), (canvas.height*0.72)); 
+      gl.uniform1f (gl.getUniformLocation(program, "iTime"), ((Date.now())/10000)%360);
+      gl.uniform1f (gl.getUniformLocation(program, "screenWidth"), (canvas.width)); 
       gl.useProgram(program);
-      gl.drawArrays(gl.POINTS, 0, 1); 
+      gl.drawArrays(gl.POINTS, 0, 1);
+      console.log();
     }
     setInterval(function(){ 
       draw();
-    }, 250);
+    }, 25);
 
   </script>
 </html>
