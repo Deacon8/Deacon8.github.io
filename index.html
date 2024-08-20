@@ -21,15 +21,34 @@
     h1{
       font-size: 2.5em;
     }
+    h2{
+      font-size: 1.5em;
+    }
+    p{
+      font-size: 0.8em;
+    }
+    button{
+      border: none;
+      background-color: #1C2833;
+      color: #FBFCFC;
+      padding: 12px 24px;
+    }
+    .bottom {
+      font-size: 0.8em;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      margin: auto;
+    }
     a{
       color: #1C2833;
       font-size: 1.5em;
+      padding: 5px;
     }
     a:hover {
       color: #990000;
     }
     canvas {
-      position: absolute; 
       left: 0; 
       right: 0; 
       margin-left: auto; 
@@ -37,24 +56,77 @@
       z-index:-1;
       border: none;
     }
+    .portfolio {
+      margin: auto;
+      text-align: center;
+      max-width: 500px;
+    }
   </style>
   <body>
-    <canvas id="Cyclic" style="border:1px solid #000000;"></canvas>
-  <h1>Hi,<br>I'm Deacon</h1>
-  <h2>I study statistics at the <br> University of British Columbia</h2>
-  <a href="mailto:deaconsowerby8@gmail.com">Email</a>
-    <br>
-  <a href="https://github.com/Deacon8">Github</a>
-    <br>
-  <a href="https://www.linkedin.com/in/deacon-sowerby-804173231/">Linkedin</a>
-    <br>
-  <a href="Resume-2024.pdf">Resume</a>
+  <div class="portfolio">
+  <h1>Hi, I'm Deacon</h1>
+  <h2>I study statistics at the University of British Columbia</h2>
+  <a href="contact.html">Contact</a>
+  <a href="https://github.com/Deacon8" target=”_blank”>Github</a>
+  <a href="https://www.linkedin.com/in/deacon-sowerby-804173231/" target=”_blank”>Linkedin</a>
+  <a href="Resume-2024.pdf" target=”_blank”>Resume</a>
+  <br>
+
+  <h1>Portfolio</h1>
+
+  <canvas style="border:1px solid #000000;"></canvas>
+  <h2>Raymarching Shader</h2>
+  <h4>I just think it looks cool</h4>
+
+  <img src="revision.webp" alt="Demoscene for Revision"><br><br>
+  <a href="https://github.com/Deacon8/GameEngine-The-Sequel" target=”_blank”>Revision Demoscene</a>
+  <h4>This was an attempt to create a 4kb demoscene for Revision 2022, as it was online due to Covid, so I didn't have to fly out to Germany.</h4>
+  <button onclick="readMore('btn3', 'hide3')" id="btn3">Read more</button>
+  <div id="hide3" style="display: none;">
+  <h4>To save space, I attempted to use a single compute shader, rather than a vertex and fragment. I attached the result to a framebuffer and blitted it to the screen.</h4>
+  <h4>So it worked on my PC, but it didn't on the demo PC. I'm thinking since I have integrated Intel Graphics, it somehow wasn't compatible, but really there isn't really a good way to figure it out.</h4>
+  <h4>The Demoscene was raymarched 3D cellular automata with a flying camera, and some music, using 4klang</h4>
+  <h4>I had a lot of problems with trying to use 4klang so I was only able to play one note at once. The audio was pretty bad. <br>
+  It not running may have been a blessing in disguise.</h4>
+  </div><br><br>
+
+  <img src="ge1.gif" alt="Game Engine"><br><br>
+  <a href="https://github.com/Deacon8/GameEngine" target=”_blank”>My First Game Engine</a>
+  <h4>A game engine I wrote in Highschool</h4>
+  <button onclick="readMore('btn1', 'hide1')" id="btn1">Read more</button>
+  <div id="hide1" style="display: none;">
+  <h4>It's written in C, with OpenGL, and minimal external libraries</h4>
+  <h4>It handles rendering, with object creation similar to game engines I&#39;ve used like Unity <br>
+  I got bogged down at the time with transformations as I hadn't taken any matrix math courses at that point, so rotations especially could use some work</h4>
+  <h4>Tech<br>GLAD for OpenGL function loading<br>GLFW for windowing<br>HandmadeMath.h for basic math functions <br>
+  stb_image.h for image loading</h4><h4>Might be hard to compile, it uses a MinGW makefile and some batch scripts <br>
+  The executable is in the bin folder, didn't know to exclude it at the time. <br></h4></div><br><br>
+
+  <img src="ge2.gif" alt="Game Engine 2"><br><br>
+  <a href="https://github.com/Deacon8/GameEngine-The-Sequel" target=”_blank”>Game Engine The Sequel</a>
+  <h4>This has much fewer features than the previous, and was more of an attempt to iron out issues I had with the first one.</h4>
+  <button onclick="readMore('btn2', 'hide2')" id="btn2">Read more</button>
+  <div id="hide2" style="display: none;">
+  <h4>I wrote this one with C++, rather than C, and in general was a lot more generous with using external libraries.</h4>
+  <h4>I ended up using SDL rather than GLFW, and used a glTF loader I found online, rather than use the old OBJ loader I wrote for the first one.</h4>
+  <h4>If you've read the readme for the original game engine I made, you'll know that I had a lot of trouble with transformations.<br>
+    I tried to iron out those problems, but I still hadn't taken the matrix math course so it's still a bit messed up, albeit more functional.</h4>
+  <h4>The main problem I ran into for this one was creating an entity component system.<br>
+    I wanted to avoid Object Oriented Programming, even though I used C++, as I used them extensively in my C# days.<br>
+    I attempted to create generic component arrays with void pointers, which the compiler was not happy about, but overall, I learned much more.</h4>
+  </div><br><br>
+
+  <a href="https://github.com/Deacon8" target=”_blank”>Check out my Github for more</a>
+
+  <br><br><br>
+  <p class="bottom">© 2024 Deacon</p>
+  </div>
   </body>
   <script type="x-shader/x-vertex" id="vertex-shader">
     #version 100
     void main() {
       gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
-      gl_PointSize = 800.;
+      gl_PointSize = 400.;
     }
   </script>
   <script type="x-shader/x-fragment" id="fragment-shader">
@@ -89,7 +161,7 @@
     }
     float GetDist(vec3 Position)//Scene
     { 
-        float sphere = sdSphere(Position, 20.*abs(sin(iTime*3.)));
+        float sphere = sdSphere(Position, 15. + 5.*(1.+sin(iTime*3.)));
         float gyroid = sdGyroid(Position, 1., .03, 1.3);
         float g1 = sdGyroid(Position, 10.76, .03, .4);
         float g2= sdGyroid(Position, 20.76, .06, .5);
@@ -131,7 +203,6 @@
     float GetLight(vec3 LightStuff)
     {
         vec3 LightPos = vec3(-20, 20, 6);
-        //LightPos.xz += vec2(sin(iTime*0.1), cos(iTime*0.1))*2.;
         vec3 Light = normalize(LightPos - LightStuff);
         vec3 Normal = GetNormal(LightStuff);
         float Dif = dot(Normal, Light);
@@ -154,8 +225,7 @@
         vec2 uv = (gl_FragCoord.xy-.5*vec2(screenWidth, screenWidth))/screenWidth;
 
         //Origin Point
-        vec3 RayOrigin = vec3(sin(iTime)*5.-10., cos(iTime)*5.-10., -40.);
-        RayOrigin = vec3(0, 0, -50.);
+        vec3 RayOrigin = vec3(0, 0, -50.);
         
         vec3 RayDirection = normalize(vec3(uv.x, uv.y, 1.));
         float d = RayMarch(RayOrigin, RayDirection);
@@ -181,12 +251,26 @@
     }
   </script>   
   <script>
+    var gifs = document.getElementsByTagName('img'); 
+    for(var i = 0; i < gifs.length; i++) {
+        gifs[i].height = screen.width/5;
+        gifs[i].width = screen.width/5;
+        gifs[i].style.height = screen.height/5;
+        gifs[i].style.width = screen.width/5;
+    }
+    function readMore(a, b)
+    {
+      document.getElementById(a).remove();
+      document.getElementById(b).style.display = "inline";
+    }
+  </script>
+  <script>
     var gl, program;
     var canvas = document.querySelector("canvas");
-    canvas.style.width = screen.width/3 + 'px';
-    canvas.style.height = screen.width/3 + 'px';
-    canvas.width = screen.width/3;
-    canvas.height = screen.width/3;
+    canvas.style.width = screen.width/5 + 'px';
+    canvas.style.height = screen.width/5 + 'px';
+    canvas.width = screen.width/5;
+    canvas.height = screen.width/5;
     if(screen.width < 850) 
     {
       canvas.style.position = "static";
